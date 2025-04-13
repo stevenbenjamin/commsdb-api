@@ -1,8 +1,4 @@
 
-CREATE TABLE IF NOT EXISTS  action (
-    id bigserial PRIMARY KEY,
-    name character varying(100) NOT NULL
-);
 
 CREATE TABLE IF NOT EXISTS  content_type (
     id bigserial PRIMARY KEY,
@@ -49,27 +45,20 @@ CREATE TABLE IF NOT EXISTS  comms_user (
     comms_role_id bigint REFERENCES comms_role(id)
 );
 
-CREATE TABLE IF NOT EXISTS  flex_schema (
+CREATE TABLE IF NOT EXISTS  form (
     id bigserial PRIMARY KEY,
     name character varying NOT NULL,
     description text
 );
 
-CREATE TABLE IF NOT EXISTS  flex_schema_field (
+CREATE TABLE IF NOT EXISTS  form_field (
     id bigserial PRIMARY KEY,
     name character varying NOT NULL,
     required boolean NOT NULL,
     field_type character varying NOT NULL,
-    flex_schema_id bigint REFERENCES flex_schema(id),
+    form_id bigint REFERENCES form(id) ON DELETE CASCADE,
     description character varying,
     extra_data jsonb
-);
-
-CREATE TABLE IF NOT EXISTS  form (
-    id bigserial PRIMARY KEY,
-    name character varying NOT NULL,
-    description text NOT NULL,
-    flex_schema_id bigint
 );
 
 CREATE TABLE IF NOT EXISTS  partner (
@@ -101,7 +90,7 @@ CREATE TABLE IF NOT EXISTS  submission (
     industry_id bigint REFERENCES industry(id),
     partner_id bigint REFERENCES partner(id),
     priority_id bigint REFERENCES priority(id),
-    schema_id bigint REFERENCES flex_schema(id),
+    schema_id bigint REFERENCES form(id),
     status_id bigint REFERENCES comms_status(id)
 );
 
