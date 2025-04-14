@@ -1,4 +1,6 @@
 .gradle
+.idea
+.quarkus
 **/build/
 !src/**/build/
 

@@ -17,6 +17,7 @@ dependencies {
     // JDBC driver dependencies
     implementation("io.quarkus:quarkus-jdbc-postgresql")
     implementation 'io.quarkus:quarkus-rest-jackson'
+    implementation ('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
     implementation 'io.quarkus:quarkus-rest-client-jackson'
     implementation 'io.quarkus:quarkus-hibernate-orm-panache'
     implementation 'io.vavr:vavr:0.10.6'
@@ -27,8 +28,8 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
 }
 
-group 'commsdb'
-version '0.0.1'
+group = 'commsdb'
+version ='0.0.1'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21

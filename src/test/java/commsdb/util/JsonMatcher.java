@@ -1,16 +1,14 @@
 package commsdb.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.logging.Log;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.function.Function;
 
 
 public class JsonMatcher<T> extends BaseMatcher {
-    private static final Logger log = LoggerFactory.getLogger(JsonMatcher.class);
     ObjectMapper mapper = new ObjectMapper();
     Function<T, Boolean> f = t -> true;
     Class<T> klazz;
@@ -30,7 +28,7 @@ public class JsonMatcher<T> extends BaseMatcher {
             value = mapper.readValue(o.toString(), klazz);
         } catch(Exception e){
             e.printStackTrace();
-            log.error("{} is not an instance of {}", o, klazz.getSimpleName());
+            Log.errorv("%s is not an instance of %s", o, klazz.getSimpleName());
             return false;
         }
         return f.apply(value);

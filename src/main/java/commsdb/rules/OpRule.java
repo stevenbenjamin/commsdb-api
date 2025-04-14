@@ -59,7 +59,6 @@ public class OpRule implements Rule {
         if (o == null || o2 == null) {
             throw new RuleApplicationException("Can't apply rule to empty values");
         }
-        System.out.printf("FIRST: %s: %s SECOND %s %s\n", o, o.getClass(), o2, o2.getClass());
 
         var klazz = o.getClass();
         var klazz2 = o2.getClass();
@@ -74,24 +73,29 @@ public class OpRule implements Rule {
         return co.compareTo(c2o);
     }
 
-    private Optional<Object> extractSubmissionValue(Submission submission, Form form) {
+    private Optional<Object> extractSubmissionValue(Submission submission, FieldType fieldType) {
         var json = JsonUtil.toJsonNode(submission.data).map(j -> j.get(fieldName));
-        var fieldType = form.getField(fieldName).map(f -> FieldType.fromString(f.fieldType));
-        if (json.isEmpty() || fieldType.isEmpty()) {
+        if (json.isEmpty() ) {
             Log.warnf("Error extracting %s:(type=%s) from %s", fieldName, fieldType, submission.data);
             return Optional.empty();
         }
-        return json.flatMap(j -> fieldType.get().extractValue(j));
+        return json.flatMap(j -> fieldType.extractValue(j));
     }
 
     @Override
     public RuleApplicationResponse apply(Submission submission, Form form) {
+        var optFieldType = form.getField(fieldName).map(f -> FieldType.fromString(f.fieldType));
+        if (optFieldType.isEmpty()){
+            Log.warnf("Can't determine field type for %s, using string", fieldName);
+        }
+        var fieldType = optFieldType.orElse(FieldType.STRING);
+        var submittedValue = extractSubmissionValue(submission,fieldType );
 
-        var submittedValue = extractSubmissionValue(submission, form);
         if (submittedValue.isEmpty()) {
             return new RuleApplicationResponse(NO_DATA, fieldName);
         }
-        var testSuccess =comparator.test( submittedValue.get(), fieldValue);
+
+        var testSuccess = comparator.test( submittedValue.get(), fieldType.cast(fieldValue));
         return  testSuccess?   new RuleApplicationResponse(ACCEPT, fieldName): new RuleApplicationResponse(REJECT, fieldName);
     }
 
