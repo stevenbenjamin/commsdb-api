@@ -11,6 +11,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'io.quarkus:quarkus-security-jpa'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     // Flyway specific dependencies
     implementation("io.quarkus:quarkus-flyway")

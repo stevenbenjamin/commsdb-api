@@ -1,5 +1,7 @@
 package commsdb.crud.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.logging.Log;
 import jakarta.persistence.*;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.CascadeType.PERSIST;
 
 /*
     @JsonbTransient
@@ -77,6 +80,8 @@ public class Post {
 
 
  */
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "idform")
 @Builder
 @Entity
 @NoArgsConstructor
@@ -84,7 +89,7 @@ public class Post {
 public class Form extends PanacheEntityBase {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "form_generator")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "form_generator")
     @SequenceGenerator(name="form_generator", sequenceName = "form_id_seq")
     public Long id;
 
@@ -92,13 +97,12 @@ public class Form extends PanacheEntityBase {
     public String name;
     public String description;
 
-//    @OneToMany(
-//            mappedBy = "formId",
-//            cascade = ALL,
-//            orphanRemoval = true,
-//            fetch = FetchType.EAGER
-//    )
-    @OneToMany(cascade=ALL, mappedBy="form")
+     @OneToMany(
+             mappedBy = "form",
+             cascade = PERSIST,
+             orphanRemoval = true,
+             fetch = FetchType.EAGER
+     )
     public List<FormField> fields ;
 
     public Optional<FormField> getField(String name){

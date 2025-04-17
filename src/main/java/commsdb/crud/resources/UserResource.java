@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.List;
 
 import commsdb.crud.entities.User;
+import io.quarkus.logging.Log;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -14,8 +15,10 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 @Path("/user")
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,7 +32,9 @@ public class UserResource {
 
     @GET
     @Path("/{id}")
-    public User get(Long id) {
+
+    public User get(Long id, @Context SecurityContext securityContext) {
+        Log.infof("Received from %s", securityContext.getUserPrincipal(), securityContext.isUserInRole("admin"));
         return User.findById(id);
     }
 

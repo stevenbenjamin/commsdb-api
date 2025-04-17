@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 @QuarkusTest
+@Transactional
 public class RuleActionTest {
 
 
@@ -33,7 +34,6 @@ public class RuleActionTest {
 
        */
 
-    @Transactional
     @Test
     public void testCreate() {
 
@@ -68,11 +68,14 @@ public class RuleActionTest {
          */
         try {
 
-            Form form = Form.builder().name("form1111111").description("form1 description").fields(List.of(
-                    FormField.builder().fieldType("string").name("string1").required(false).id(null).build(),
-                    FormField.builder().fieldType("number").name("number1").required(true).id(null).build(),
-                    FormField.builder().fieldType("choice").name("choice1").required(true).id(null).extraData("[\"A\",\"B\"]").build()))
-                    .build();
+            Form form = Form.builder().name("form1111111").description("form1 description").build();
+
+            form.fields =  List.of(
+                    FormField.builder().fieldType("string").name("string1").required(false).id(null).form(form).build(),
+                    FormField.builder().fieldType("number").name("number1").required(true).id(null).form(form).build(),
+                    FormField.builder().fieldType("choice").name("choice1").required(true).id(null).form(form)
+                            .extraData("[\"A\",\"B\"]").build());
+
 
             form.persistAndFlush();
             Form f2 = Form.findById(form.id);

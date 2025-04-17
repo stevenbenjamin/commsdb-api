@@ -1,23 +1,56 @@
 package commsdb.crud.entities;
 
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.Entity;
+import commsdb.crud.StringSetAttributeConverter;
+import io.quarkus.elytron.security.common.BcryptUtil;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.security.jpa.Password;
+import io.quarkus.security.jpa.Roles;
+import io.quarkus.security.jpa.UserDefinition;
+import io.quarkus.security.jpa.Username;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.Set;
+@Builder
+@Entity
+@Table(name="comms_user")
+@NoArgsConstructor
+@AllArgsConstructor
+@UserDefinition
+public class User extends PanacheEntityBase {
 
-@Entity(name="comms_user")
-public class User extends PanacheEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "user_generator")
+    @SequenceGenerator(name="user_generator", sequenceName = "comms_user_id_seq")
+    public Long id;
 
+    @Password
     public String password;
     public String email;
     public Timestamp lastLogin;
+    @Username
+    public String userName;
     public String firstName;
     public String lastName;
-    public Long commsRoleId;
-    public static User findByName(String name){
-        return find("name", name).firstResult(); //optional?
+    @Convert(converter = StringSetAttributeConverter.class)
+    @Column(name = "roles", nullable = false)
+    @Roles
+    public Set<String> roles;
+    public static User findByName(String userName){
+        return find("userName", userName).firstResult(); //optional?
     }
+
+    public static void add(String username, String firstName, String lastName, String email, String password, Set<String> roles) {
+        User user =  User.builder().userName(username).firstName(firstName)
+                .lastName(lastName).email(email).password(BcryptUtil.bcryptHash(password)).roles(roles).build();
+
+        user.persist();
+    }
+
     /*
 //
 //    @Column(name="last_name")

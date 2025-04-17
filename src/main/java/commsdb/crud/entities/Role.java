@@ -1,10 +1,11 @@
 package commsdb.crud.entities;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.Entity;
+public enum Role {
+    ADMIN,
+    REVIEWER,
+    EDITOR;
 
-@Entity(name="comms_role")
-public class Role extends PanacheEntity {
-    public String name;
+    public static Role fromString (String s){
+        return Role.valueOf(s.toUpperCase());
+    }
 }
-

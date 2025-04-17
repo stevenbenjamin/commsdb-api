@@ -26,10 +26,7 @@ CREATE TABLE IF NOT EXISTS  risk_level (
     id bigserial PRIMARY KEY,
     name character varying(100) NOT NULL
 );
-CREATE TABLE IF NOT EXISTS  comms_role (
-    id bigserial PRIMARY KEY,
-    name character varying(100) NOT NULL
-);
+
 CREATE TABLE IF NOT EXISTS  comms_status (
     id bigserial PRIMARY KEY,
     name character varying(100) NOT NULL
@@ -39,10 +36,11 @@ CREATE TABLE IF NOT EXISTS  comms_user (
     id bigserial PRIMARY KEY,
     password character varying(128) NOT NULL,
     last_login timestamp with time zone DEFAULT NOW(),
+    user_name character varying(150) NOT NULL UNIQUE,
     first_name character varying(150) NOT NULL,
     last_name character varying(150) NOT NULL,
-    email character varying(254) NOT NULL,
-    comms_role_id bigint REFERENCES comms_role(id)
+    roles character varying NOT NULL,
+    email character varying NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS  form (
