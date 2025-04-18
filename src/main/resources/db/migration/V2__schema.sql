@@ -72,7 +72,13 @@ CREATE TABLE IF NOT EXISTS  rule (
     description text NOT NULL,
     rule_type character varying NOT NULL,
     field_name character varying,
-    rule character varying NOT NULL
+    expr character varying NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS form_field_rule_m2m (
+    id bigserial PRIMARY KEY,
+    rule_id bigserial REFERENCES rule(id),
+    form_id bigserial REFERENCES form(id)
 );
 
 CREATE TABLE IF NOT EXISTS  submission (

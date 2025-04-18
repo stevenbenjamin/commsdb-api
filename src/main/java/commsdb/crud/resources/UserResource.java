@@ -34,7 +34,11 @@ public class UserResource {
     @Path("/{id}")
 
     public User get(Long id, @Context SecurityContext securityContext) {
-        Log.infof("Received from %s", securityContext.getUserPrincipal(), securityContext.isUserInRole("admin"));
+        var v = securityContext;
+        var p = v.getUserPrincipal();
+        System.out.printf("\n\n\nReceived from %s: %s\n\n", p.getName(), securityContext.isUserInRole("admin"));
+
+        Log.infof("Received from %s: %s\n\n", p.getName(), securityContext.isUserInRole("admin"));
         return User.findById(id);
     }
 

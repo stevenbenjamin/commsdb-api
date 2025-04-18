@@ -14,15 +14,13 @@ import org.hibernate.type.SqlTypes;
 
 import java.util.Optional;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "form")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "form")
 @Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class FormField extends PanacheEntityBase {
 
-   
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO,  generator = "form_field_generator")
     @SequenceGenerator(name = "form_field_generator", sequenceName = "form_field_id_seq", schema="public",allocationSize=1)

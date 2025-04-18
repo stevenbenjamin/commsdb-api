@@ -81,7 +81,7 @@ public class Post {
 
  */
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "idform")
+        property = "id")
 @Builder
 @Entity
 @NoArgsConstructor
@@ -105,6 +105,21 @@ public class Form extends PanacheEntityBase {
      )
     public List<FormField> fields ;
 
+     /*
+     @ManyToMany
+    @JoinTable(name = "book_author",
+               joinColumns = @JoinColumn(name = "book_id"),
+               inverseJoinColumns = @JoinColumn(name = "author_id"))
+
+      */
+    @ManyToMany
+    @JoinTable(name="form_field_rule_m2m",
+            joinColumns=
+            @JoinColumn(name="FORM_ID"),//, referencedColumnName="ID"),
+            inverseJoinColumns=
+            @JoinColumn(name="RULE_ID")//, referencedColumnName="ID")
+    )
+    public List<RuleData> rules;
     public Optional<FormField> getField(String name){
         if (fields == null){
             Log.warnf("Can't get field %s - form fields are not populated", name);

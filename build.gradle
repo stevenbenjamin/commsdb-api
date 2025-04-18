@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'io.quarkus'
     id('io.freefair.lombok') version "8.13.1"
+    id 'org.kordamp.gradle.jandex' version '2.1.0'
 
 }
 
@@ -25,8 +26,8 @@ dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-rest'
-    testImplementation 'io.quarkus:quarkus-junit5'
-    testImplementation 'io.rest-assured:rest-assured'
+    implementation 'io.quarkus:quarkus-junit5'
+    implementation 'io.rest-assured:rest-assured'
 }
 
 group = 'commsdb'
@@ -47,4 +48,18 @@ compileJava {
 
 compileTestJava {
     options.encoding = 'UTF-8'
+}
+
+afterEvaluate {
+    var taskJandex = tasks.named("jandex")
+    var quarkusDependenciesBuild = tasks.named("quarkusDependenciesBuild")
+    println "Task jandex: $taskJandex"
+    println "Task quarkusDependenciesBuild: $quarkusDependenciesBuild"
+    if (taskJandex && quarkusDependenciesBuild) {
+        quarkusDependenciesBuild.get().dependsOn(taskJandex)
+    } else {
+        println("One or both jandex related tasks are not present. Task quarkusDependenciesBuild.dependsOn(jandex).")
+        println("Task jandex: $taskJandex")
+        println("Task quarkusDependenciesBuild: $quarkusDependenciesBuild")
+    }
 }

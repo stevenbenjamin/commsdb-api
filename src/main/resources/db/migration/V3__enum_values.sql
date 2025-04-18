@@ -18,5 +18,5 @@ INSERT INTO comms_status(name) values ('approved');
 --INSERT INTO form_field(name, required, field_type, form_id, description) VALUES
 --('number', true, 'number', 1, 'numeric');
 
-INSERT INTO RULE(name, description, rule_type, field_name, rule) values ('eq', 'a == "X" example', 'eq', 'a','X');
-INSERT INTO RULE(name, description, rule_type, rule) values ('contains X', 'contains rule example', 'contains', 'X');
+INSERT INTO RULE(name, description, rule_type, field_name, expr) values ('eq', 'a == "X" example', 'eq', 'a','X');
+INSERT INTO RULE(name, description, rule_type, expr) values ('contains X', 'contains rule example', 'contains', 'X');

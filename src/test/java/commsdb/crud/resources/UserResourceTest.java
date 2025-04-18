@@ -2,17 +2,17 @@ package commsdb.crud.resources;
 
 import commsdb.crud.entities.RuleData;
 import commsdb.crud.entities.User;
-import commsdb.util.JsonMatcher;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.common.mapper.TypeRef;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
-@Transactional
+//@Transactional
 @QuarkusTest
 class UserResourceTest {
 
@@ -20,11 +20,11 @@ class UserResourceTest {
 
     @Test
     void testGetEndpoint() {
-        given()
+        var users = given()
                 .when().get("/user").then()
                 .statusCode(200)
-                .body(is(new JsonMatcher<ArrayList<User>>((Class<ArrayList<User>>) new ArrayList<User>().getClass()) {
-                }));
+                .assertThat().extract().body().as(new TypeRef<List<User>>(){});
+        System.out.println( users);
     }
 //
 //    @Transactional

@@ -2,6 +2,7 @@ package commsdb.rules;
 
 import commsdb.crud.entities.Form;
 import commsdb.crud.entities.FormField;
+import commsdb.util.JsonUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,15 @@ public class RuleActionTest {
          *
          */
         try {
+            var eqRule =OpRule.EQ("string1", "value");
+            var eqData =  eqRule.toRuleData();
+            var booleanRule =OpRule.EQ("bool1", true);
+            var boolData = booleanRule.toRuleData();
 
+            eqData.persistAndFlush();
+            boolData.persistAndFlush();
+
+            // CREATE A FORM
             Form form = Form.builder().name("form1111111").description("form1 description").build();
 
             form.fields =  List.of(
@@ -76,10 +85,25 @@ public class RuleActionTest {
                     FormField.builder().fieldType("choice").name("choice1").required(true).id(null).form(form)
                             .extraData("[\"A\",\"B\"]").build());
 
+            form.rules=List.of(boolData, eqData);
 
             form.persistAndFlush();
+            //verify form exists
             Form f2 = Form.findById(form.id);
+            System.out.println(JsonUtil.toJsonString(f2));
+            // CREATE SOME RULES
 
+
+
+
+//         *
+//         * Submit using form
+//                    *
+//                    * TEst: does rule apply to this form?
+//                    *
+//                    * On submission apply rules -> Generate recommendations
+//                    *
+            //
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
