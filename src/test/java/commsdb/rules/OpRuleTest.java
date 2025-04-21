@@ -6,6 +6,7 @@ import commsdb.crud.entities.Form;
 import commsdb.crud.entities.FormField;
 import commsdb.crud.entities.RuleData;
 import commsdb.crud.entities.Submission;
+import commsdb.crud.entities.util.EnumAttributeConverter;
 import commsdb.util.DateUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;

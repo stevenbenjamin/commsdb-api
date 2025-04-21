@@ -16,13 +16,13 @@ public class Submission extends PanacheEntity {
     public Boolean flagged;
     public String flagReason;
     public String data;//json
-    public Long contentTypeId;
+    public String contentType;
     public Long creatorId;
     public Long industryId;
     public Long partnerId;
-    public Long priorityId;
+    public String priority;
     public Long schemaId;
-    public Long statusId;
+    public String status;
     public Timestamp createdTime;
     public Timestamp lastModifiedTime;
 }

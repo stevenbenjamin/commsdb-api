@@ -1,7 +1,7 @@
 package commsdb.crud.entities;
 
 
-import commsdb.crud.StringSetAttributeConverter;
+import commsdb.crud.entities.util.StringSetAttributeConverter;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.security.jpa.Password;

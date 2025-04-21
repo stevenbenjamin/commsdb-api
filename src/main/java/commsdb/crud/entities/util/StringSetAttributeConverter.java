@@ -1,4 +1,4 @@
-package commsdb.crud;
+package commsdb.crud.entities.util;
 
 import jakarta.persistence.AttributeConverter;
 
@@ -9,11 +9,12 @@ public class StringSetAttributeConverter implements AttributeConverter<Set<Strin
     private static final String SPLIT_CHAR = ",";
 
     @Override
-    public String convertToDatabaseColumn(Set<String> strings) {
-        return strings != null ? String.join(SPLIT_CHAR, strings) : "";
+    public String convertToDatabaseColumn(Set<String> stringList) {
+        return stringList != null ? String.join(SPLIT_CHAR, stringList) : "";
     }
+
     @Override
     public Set<String> convertToEntityAttribute(String string) {
-        return string != null ? Set.of(string.split(SPLIT_CHAR)): new HashSet<String>();
+        return string != null ? Set.of(string.split(SPLIT_CHAR)) : new HashSet<String>();
     }
 }

@@ -3,7 +3,9 @@ package commsdb.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeCreator;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.NullNode;
 import io.quarkus.logging.Log;
 
 import java.util.Map;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 public class JsonUtil {
 
 
+    public static JsonNode EMPTY_JSON = NullNode.getInstance();
     public static Optional<JsonNode> toJsonNode(String s)   {
 
         try {

@@ -8,5 +8,5 @@ public interface Rule {
 
     RuleApplicationResponse apply(Submission submission, Form form);
 
-    public RuleData toRuleData();
+    public RuleData toRuleData(Long formId);
 }

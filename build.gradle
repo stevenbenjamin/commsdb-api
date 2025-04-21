@@ -63,3 +63,7 @@ afterEvaluate {
         println("Task quarkusDependenciesBuild: $quarkusDependenciesBuild")
     }
 }
+
+//tasks.named('commsdb.crud.entities.util.EnumAttributeConverter.main') {
+//    dependsOn('jandex')
+//}

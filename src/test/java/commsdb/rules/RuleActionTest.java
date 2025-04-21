@@ -1,18 +1,27 @@
 package commsdb.rules;
 
+import commsdb.crud.entities.ActionData;
 import commsdb.crud.entities.Form;
 import commsdb.crud.entities.FormField;
-import commsdb.util.JsonUtil;
+import commsdb.enums.Action;
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static commsdb.util.JsonUtil.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @QuarkusTest
 @Transactional
 public class RuleActionTest {
 
+        @       jakarta.inject.Inject
+        EntityManager entityManager;
 
 //    @QuarkusTest
 //    public class StaticContentTest {
@@ -36,7 +45,7 @@ public class RuleActionTest {
        */
 
     @Test
-    public void testCreate() {
+    public void testCreate() throws Exception{
 
         /**
          * Create form, with fields
@@ -67,47 +76,53 @@ public class RuleActionTest {
          * >
          *
          */
-        try {
-            var eqRule =OpRule.EQ("string1", "value");
-            var eqData =  eqRule.toRuleData();
-            var booleanRule =OpRule.EQ("bool1", true);
-            var boolData = booleanRule.toRuleData();
-
-            eqData.persistAndFlush();
-            boolData.persistAndFlush();
 
             // CREATE A FORM
             Form form = Form.builder().name("form1111111").description("form1 description").build();
 
             form.fields =  List.of(
-                    FormField.builder().fieldType("string").name("string1").required(false).id(null).form(form).build(),
-                    FormField.builder().fieldType("number").name("number1").required(true).id(null).form(form).build(),
-                    FormField.builder().fieldType("choice").name("choice1").required(true).id(null).form(form)
+                    FormField.builder().fieldType("string").name("string1").required(false).form(form).build(),
+                    FormField.builder().fieldType("number").name("number1").required(true).form(form).build(),
+                    FormField.builder().fieldType("choice").name("choice1").required(true).form(form)
                             .extraData("[\"A\",\"B\"]").build());
 
-            form.rules=List.of(boolData, eqData);
 
             form.persistAndFlush();
+            var eqRule =OpRule.EQ("string1", "value");
+            var eqData =  eqRule.toRuleData(form.id);
+            eqData.actions = List.of(
+                    ActionData.builder().action(Action.Approve).rule(eqData).name("pass").build(),
+                    ActionData.builder().action(Action.Deny).rule(eqData).name("fail").build());
+
+            var booleanRule =OpRule.EQ("bool1", true);
+            var boolData = booleanRule.toRuleData(form.id);
+            boolData.actions = List.of(
+                    ActionData.builder().action(Action.Forward).name("forward").rule(boolData).extraData("{\"user\":1}").build(),
+                    ActionData.builder().action(Action.Deny).name("fail").rule(boolData).build());
+
+            eqData.persistAndFlush();
+            boolData.persistAndFlush();
+        
+            entityManager.refresh(form);
+            entityManager.refresh(eqData);
+            entityManager.refresh(boolData);
+            System.out.println(toJsonString(form));
             //verify form exists
-            Form f2 = Form.findById(form.id);
-            System.out.println(JsonUtil.toJsonString(f2));
-            // CREATE SOME RULES
+            Form f2 = Form.findById(form.id, LockModeType.PESSIMISTIC_READ);
+
+            System.out.println(toJsonString(f2));
+//            Optional<Form> f3 = Form.findByIdOptional(8);
+//
+//            System.out.println(toJsonString(f3.orElse(new Form())));
+            assertTrue(f2.id > 0, "form id is set");
+            assertEquals(3, f2.fields.size(), "form has 3 fields set");
+            assertEquals(2, f2.rules.size(), "form has 2 rules set");
+            f2.rules.forEach(r ->
+                    assertEquals(2, r.actions.size(), r.expr + " has 2 actions"));
 
 
+            // on delete deletes rules
 
-
-//         *
-//         * Submit using form
-//                    *
-//                    * TEst: does rule apply to this form?
-//                    *
-//                    * On submission apply rules -> Generate recommendations
-//                    *
-            //
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
 
 //        Submission submission = Submission.builder()
 //                .title("title")

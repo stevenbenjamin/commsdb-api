@@ -1,101 +1,89 @@
 
-
-CREATE TABLE IF NOT EXISTS  content_type (
-    id bigserial PRIMARY KEY,
-    name character varying(100) NOT NULL
-);
-CREATE TABLE IF NOT EXISTS  denial_reason (
-    id bigserial PRIMARY KEY,
-    name character varying(100) NOT NULL
-);
-CREATE TABLE IF NOT EXISTS  distribution_channel (
-    id bigserial PRIMARY KEY,
-    name character varying(100) NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS  industry (
     id bigserial PRIMARY KEY,
-    name character varying(100) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS  priority (
-    id bigserial PRIMARY KEY,
-    name character varying(100) NOT NULL
-);
-CREATE TABLE IF NOT EXISTS  risk_level (
-    id bigserial PRIMARY KEY,
-    name character varying(100) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS  comms_status (
-    id bigserial PRIMARY KEY,
-    name character varying(100) NOT NULL
+    name varchar(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS  comms_user (
     id bigserial PRIMARY KEY,
-    password character varying(128) NOT NULL,
+    password varchar(128) NOT NULL,
     last_login timestamp with time zone DEFAULT NOW(),
-    user_name character varying(150) NOT NULL UNIQUE,
-    first_name character varying(150) NOT NULL,
-    last_name character varying(150) NOT NULL,
-    roles character varying NOT NULL,
-    email character varying NOT NULL
+    user_name varchar(150) NOT NULL UNIQUE,
+    first_name varchar(150) NOT NULL,
+    last_name varchar(150) NOT NULL,
+    roles varchar NOT NULL,
+    email varchar NOT NULL
 );
+
+CREATE SEQUENCE comms_user_seq OWNED BY comms_user.id;
 
 CREATE TABLE IF NOT EXISTS  form (
     id bigserial PRIMARY KEY,
-    name character varying NOT NULL,
+    name varchar NOT NULL,
     description text
 );
 
+CREATE SEQUENCE form_seq OWNED BY form.id;
+
 CREATE TABLE IF NOT EXISTS  form_field (
     id bigserial PRIMARY KEY,
-    name character varying NOT NULL,
+    name varchar NOT NULL,
     required boolean NOT NULL,
-    field_type character varying NOT NULL,
+    field_type varchar NOT NULL,
     form_id bigint REFERENCES form(id) ON DELETE CASCADE,
-    description character varying,
+    description varchar,
     extra_data jsonb
 );
 
+CREATE SEQUENCE form_field_seq OWNED BY form_field.id;
+
 CREATE TABLE IF NOT EXISTS  partner (
     id bigserial PRIMARY KEY,
-    name character varying NOT NULL,
-    contact_email character varying(254) NOT NULL,
+    name varchar NOT NULL,
+    contact_email varchar(254) NOT NULL,
     industry_id bigint REFERENCES industry(id)
 );
 
+CREATE SEQUENCE partner_seq OWNED BY partner.id;
+
 CREATE TABLE IF NOT EXISTS  rule (
     id bigserial PRIMARY KEY,
-    name character varying NOT NULL,
+    name varchar NOT NULL,
     description text NOT NULL,
-    rule_type character varying NOT NULL,
-    field_name character varying,
-    expr character varying NOT NULL
+    rule_type varchar NOT NULL,
+    form_id bigint REFERENCES form(id) ON DELETE CASCADE,
+    field_name varchar,
+    expr varchar NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS form_field_rule_m2m (
+CREATE SEQUENCE rule_seq OWNED BY rule.id;
+
+CREATE TABLE IF NOT EXISTS action (
     id bigserial PRIMARY KEY,
-    rule_id bigserial REFERENCES rule(id),
-    form_id bigserial REFERENCES form(id)
+    name varchar NOT NULL,
+    description text,
+    rule_id bigint REFERENCES rule(id) ON DELETE CASCADE,
+    action varchar NOT NULL,
+    extra_data jsonb
 );
+
+CREATE SEQUENCE action_seq OWNED BY action.id;
 
 CREATE TABLE IF NOT EXISTS  submission (
     id bigserial PRIMARY KEY,
-    title character varying,
+    title varchar,
     flagged boolean NOT NULL,
     flag_reason text,
     data text,
     created_time timestamp with time zone NOT NULL DEFAULT NOW(),
     last_modified_time timestamp with time zone NOT NULL DEFAULT NOW(),
-    content_type_id bigint REFERENCES content_type(id),
+    content_type varchar,
     creator_id bigint REFERENCES comms_user(id),
     industry_id bigint REFERENCES industry(id),
     partner_id bigint REFERENCES partner(id),
-    priority_id bigint REFERENCES priority(id),
+    priority varchar,
     schema_id bigint REFERENCES form(id),
-    status_id bigint REFERENCES comms_status(id)
+    status varchar
 );
 
 CREATE OR REPLACE FUNCTION trigger_set_timestamp()
@@ -111,15 +99,16 @@ BEFORE UPDATE ON submission
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
+
 CREATE TABLE IF NOT EXISTS  attachement (
     id bigserial PRIMARY KEY,
-    name character varying,
+    name varchar,
     description text,
     data text,
-    url character varying(200),
+    url varchar(200),
     created_time timestamp with time zone NOT NULL DEFAULT NOW(),
     last_modified_time timestamp with time zone NOT NULL DEFAULT NOW(),
-    content_type_id bigint REFERENCES content_type(id),
+    content_type varchar,
     creator_id bigint REFERENCES comms_user(id),
     submission_id bigint REFERENCES submission(id)
 );
@@ -128,7 +117,7 @@ CREATE TABLE IF NOT EXISTS  compliance_risk (
     id bigserial PRIMARY KEY,
     name varchar NOT NULL,
     suggested_edits text NOT NULL,
-    risk_level_id bigint REFERENCES risk_level(id),
+    risk_level varchar,
     submission_id bigserial REFERENCES submission(id)
 );
 
@@ -151,4 +140,6 @@ CREATE TABLE IF NOT EXISTS  thread_message (
     content text NOT NULL,
     thread_id bigserial
 );
+
+CREATE SEQUENCE thread_message_seq OWNED BY thread_message.id;
 

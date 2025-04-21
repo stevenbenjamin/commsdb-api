@@ -31,7 +31,7 @@ public class FormField extends PanacheEntityBase {
     public String fieldType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="form_id")//, foreignKey = @ForeignKey(name="form_field_form_id_fk"))
+    @JoinColumn(name="form_id")
     public Form form;
 
     @JdbcTypeCode(SqlTypes.JSON)
