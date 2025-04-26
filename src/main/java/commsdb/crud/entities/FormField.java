@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import commsdb.enums.ActionType;
+import commsdb.rules.FieldType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,7 +30,9 @@ public class FormField extends PanacheEntityBase {
     public String name;
     public String description;
     public Boolean required;
-    public String fieldType;
+
+    @Convert(converter = FieldType.Converter.class)
+    public FieldType fieldType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="form_id")

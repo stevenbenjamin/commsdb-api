@@ -2,6 +2,7 @@ package commsdb.crud.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import commsdb.rules.FieldType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.logging.Log;
 import jakarta.persistence.*;
@@ -26,7 +27,6 @@ public class Form extends   PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "form_generator")
    @SequenceGenerator(name="form_generator", sequenceName = "form_id_seq")
     public Long id;
-
 
     public String name;
     public String description;
@@ -53,5 +53,9 @@ public class Form extends   PanacheEntityBase {
             return Optional.empty();
         }
         return fields.stream().filter(f -> f.name.equals(name)).findFirst();
+    }
+
+    public Optional<FieldType> getFieldType(String name){
+        return getField(name).map(f -> f.fieldType);
     }
 }

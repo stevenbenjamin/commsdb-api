@@ -4,7 +4,7 @@ package commsdb.crud.resources;
 import java.net.URI;
 import java.util.List;
 
-import commsdb.crud.entities.Attachement;
+import commsdb.crud.entities.Attachment;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -20,22 +20,22 @@ import jakarta.ws.rs.core.Response;
 @Path("/attachement")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class AttachementResource {
+public class AttachmentResource {
 
     @GET
-    public List<Attachement> list() {
-        return Attachement.listAll();
+    public List<Attachment> list() {
+        return Attachment.listAll();
     }
 
     @GET
     @Path("/{id}")
-    public Attachement get(Long id) {
-        return Attachement.findById(id);
+    public Attachment get(Long id) {
+        return Attachment.findById(id);
     }
 
     @POST
     @Transactional
-    public Response create(Attachement Attachement) {
+    public Response create(Attachment Attachement) {
         Attachement.persist();
         return Response.created(URI.create("/Attachements/" + Attachement.id)).build();
     }
@@ -43,8 +43,8 @@ public class AttachementResource {
     @PUT
     @Path("/{id}")
     @Transactional
-    public Attachement update(Long id, Attachement attachement) {
-        Attachement entity = Attachement.findById(id);
+    public Attachment update(Long id, Attachment attachement) {
+        Attachment entity = Attachment.findById(id);
         if(entity == null) {
             throw new NotFoundException();
         }
@@ -59,7 +59,7 @@ public class AttachementResource {
     @Path("/{id}")
     @Transactional
     public void delete(Long id) {
-        Attachement entity = Attachement.findById(id);
+        Attachment entity = Attachment.findById(id);
         if(entity == null) {
             throw new NotFoundException();
         }
@@ -69,6 +69,6 @@ public class AttachementResource {
      @GET
      @Path("/count")
      public Long count() {
-         return Attachement.count();
+         return Attachment.count();
      }
 }

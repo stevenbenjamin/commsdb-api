@@ -6,7 +6,7 @@ import jakarta.persistence.Entity;
 import java.sql.Timestamp;
 
 @Entity
-public class Attachement extends PanacheEntity {
+public class Attachment extends PanacheEntity {
     public String name;
     public String description;
     public String data;//json

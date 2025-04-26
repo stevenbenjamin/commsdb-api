@@ -36,7 +36,7 @@ public class RuleData extends PanacheEntityBase {
     public Form form;
 
     @OneToMany(mappedBy = "rule", cascade = PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
-    public List<ActionData> actions;
+    public List<OnRuleAction> actions;
 
 }
 

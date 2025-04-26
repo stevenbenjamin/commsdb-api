@@ -6,7 +6,7 @@ import commsdb.crud.entities.Submission;
 
 public interface Rule {
 
-    RuleApplicationResponse apply(Submission submission, Form form);
+    RuleApplicationResult apply(Submission submission, Form form);
 
     public RuleData toRuleData(Long formId);
 }

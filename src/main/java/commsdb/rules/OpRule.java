@@ -4,13 +4,12 @@ package commsdb.rules;
 import commsdb.crud.entities.Form;
 import commsdb.crud.entities.RuleData;
 import commsdb.crud.entities.Submission;
-import commsdb.util.JsonUtil;
 import io.quarkus.logging.Log;
 
 import java.util.Optional;
 import java.util.function.BiPredicate;
 
-import static commsdb.rules.RuleApplicationResponse.ResponseType.*;
+import static commsdb.enums.RuleApplicationResultType.*;
 
 
 public class OpRule implements Rule {
@@ -52,29 +51,29 @@ public class OpRule implements Rule {
     }
 
     private Optional<Object> extractSubmissionValue(Submission submission, FieldType fieldType) {
-        var json = JsonUtil.toJsonNode(submission.data).map(j -> j.get(fieldName));
-        if (json.isEmpty()) {
+        var m = submission.data.get(fieldName);
+        if (m == null) {
             Log.warnf("Error extracting %s:(type=%s) from %s", fieldName, fieldType, submission.data);
             return Optional.empty();
         }
-        return json.flatMap(fieldType::extractValue);
+        return fieldType.extractValue(m);
     }
 
     @Override
-    public RuleApplicationResponse apply(Submission submission, Form form) {
-        var optFieldType = form.getField(fieldName).map(f -> FieldType.fromString(f.fieldType));
+    public RuleApplicationResult apply(Submission submission, Form form) {
+        var optFieldType = form.getField(fieldName).map(fld -> fld.fieldType);
         if (optFieldType.isEmpty()) {
             Log.warnf("Can't determine field type for %s, using string", fieldName);
         }
-        var fieldType = optFieldType.orElse(FieldType.STRING);
+        var fieldType = optFieldType.orElse(FieldType.String);
         var submittedValue = extractSubmissionValue(submission, fieldType);
 
         if (submittedValue.isEmpty()) {
-            return new RuleApplicationResponse(NO_DATA, fieldName);
+            return new RuleApplicationResult(NoData, fieldName);
         }
 
         var testSuccess = op.comparator.test(submittedValue.get(), fieldType.cast(fieldValue));
-        return testSuccess ? new RuleApplicationResponse(ACCEPT, fieldName) : new RuleApplicationResponse(REJECT, fieldName);
+        return testSuccess ? new RuleApplicationResult(Accept, fieldName) : new RuleApplicationResult(Reject, fieldName);
     }
 
     @Override

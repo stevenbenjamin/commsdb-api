@@ -28,6 +28,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-rest'
     implementation 'io.quarkus:quarkus-junit5'
     implementation 'io.rest-assured:rest-assured'
+    //implementation 'com.github.javafaker:javafaker:1.0.2'
 }
 
 group = 'commsdb'

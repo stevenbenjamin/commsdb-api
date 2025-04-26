@@ -1,20 +1,16 @@
 package commsdb.rules;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import commsdb.crud.entities.util.EnumAttributeConverter;
 import commsdb.util.DateUtil;
 import io.quarkus.logging.Log;
 import io.vavr.control.Try;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.Date;
 import java.util.Optional;
 public  enum FieldType {
 
-    STRING(String.class) {
+    String(String.class) {
         @Override
         protected String tryCast(Object o) {
             return o.toString();
@@ -24,7 +20,7 @@ public  enum FieldType {
             return Optional.of(node.asText());
         }
     },
-    INTEGER(Long.class) {
+    Integer(Long.class) {
         @Override
         protected Long tryCast(Object o) {
             if (o instanceof Number) {
@@ -37,7 +33,7 @@ public  enum FieldType {
             return Optional.of(node.asLong());
         }
     },
-    FLOATING(Double.class) {
+    Floating(Double.class) {
         @Override
         protected Double tryCast(Object o) {
             if (o instanceof Number) {
@@ -50,7 +46,7 @@ public  enum FieldType {
             return Optional.of(node.asDouble());
         }
     },
-    DATE(LocalDate.class) {
+    Date(LocalDate.class) {
 
         @Override
         protected LocalDate tryCast(Object o)  {
@@ -62,10 +58,10 @@ public  enum FieldType {
            return DateUtil.parse(node.asText()).map(d -> (Object)d);
         }
     },
-    BOOLEAN(Boolean.class) {
+    Boolean(Boolean.class) {
         @Override
-        protected Boolean tryCast(Object o) {
-            return Boolean.parseBoolean(o.toString());
+        protected java.lang.Boolean tryCast(Object o) {
+            return java.lang.Boolean.parseBoolean(o.toString());
         }
         @Override
         public Optional<Object> extractValue(JsonNode node) {
@@ -75,9 +71,6 @@ public  enum FieldType {
     protected   Class<?> fieldClass = null;
     FieldType(Class<?> fieldClass){this.fieldClass=fieldClass;}
 
-    public static FieldType fromString(String s) {
-        return FieldType.valueOf(s.toUpperCase());
-    }
     public  Object cast (Object o)  {
         if (fieldClass.isInstance(o)){
             return o;
@@ -90,4 +83,7 @@ public  enum FieldType {
     protected abstract Comparable<?> tryCast(Object o)  ;
     public abstract Optional<Object> extractValue(JsonNode node);
 
+    public static  class Converter extends EnumAttributeConverter<FieldType> {
+        public Converter(){super(FieldType.class);}
+    }
 }

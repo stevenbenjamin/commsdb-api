@@ -1,6 +1,6 @@
 package commsdb.crud.entities.util;
 
-import commsdb.enums.Action;
+import commsdb.enums.ActionType;
 import jakarta.persistence.AttributeConverter;
 import lombok.AllArgsConstructor;
 
@@ -18,8 +18,6 @@ public abstract class EnumAttributeConverter<T extends Enum<T>> implements Attri
         return Enum.valueOf(klazz,string);
     }
 
-    public static  class ActionConverter extends EnumAttributeConverter<Action> {
-        public ActionConverter(){super(Action.class);}
-    }
+
 
 }

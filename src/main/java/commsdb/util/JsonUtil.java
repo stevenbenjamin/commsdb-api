@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeCreator;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.NullNode;
 import io.quarkus.logging.Log;
+import io.quarkus.runtime.annotations.QuarkusMain;
 
 import java.util.Map;
 import java.util.Optional;
@@ -17,7 +18,7 @@ public class JsonUtil {
 
     public static JsonNode EMPTY_JSON = NullNode.getInstance();
     public static Optional<JsonNode> toJsonNode(String s)   {
-
+        if (s == null) return Optional.empty();
         try {
             return Optional.of(new ObjectMapper().readTree(s));
         }
@@ -27,6 +28,14 @@ public class JsonUtil {
         }
     }
 
+    public static JsonNode toJson(Map<String,Object> m ){
+        return toJsonNode(toJsonString(m)).orElse(EMPTY_JSON);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String,Object> toMap(JsonNode node){
+       return (Map<String,Object>) new ObjectMapper().convertValue(node, Map.class);
+    }
     public static <T> T fromString(String s, Class<T> klazz) throws JsonProcessingException {
         return new ObjectMapper().readValue(s, klazz);
     }
@@ -39,6 +48,7 @@ public class JsonUtil {
             throw new RuntimeException(e);
         }
     }
+
 
 //     private static Object toNumber (JsonNode node){
 //        return node.isInt()?  node.asInt():node.asDouble();

@@ -58,16 +58,14 @@ CREATE TABLE IF NOT EXISTS  rule (
 
 CREATE SEQUENCE rule_seq OWNED BY rule.id;
 
-CREATE TABLE IF NOT EXISTS action (
+CREATE TABLE IF NOT EXISTS on_rule_action (
     id bigserial PRIMARY KEY,
     name varchar NOT NULL,
     description text,
     rule_id bigint REFERENCES rule(id) ON DELETE CASCADE,
-    action varchar NOT NULL,
+    action_type varchar NOT NULL,
     extra_data jsonb
 );
-
-CREATE SEQUENCE action_seq OWNED BY action.id;
 
 CREATE TABLE IF NOT EXISTS  submission (
     id bigserial PRIMARY KEY,
@@ -142,4 +140,41 @@ CREATE TABLE IF NOT EXISTS  thread_message (
 );
 
 CREATE SEQUENCE thread_message_seq OWNED BY thread_message.id;
+
+CREATE TABLE IF NOT EXISTS event (
+    id bigserial PRIMARY KEY,
+    description varchar,
+    submission_id bigserial REFERENCES submission(id),
+    extra_data jsonb,
+    created_time timestamp with time zone NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS recommendation (
+    id bigserial PRIMARY KEY,
+    description varchar,
+    action_type varchar,
+    submission_id bigserial REFERENCES submission(id),
+    extra_data jsonb,
+    created_time timestamp with time zone NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS action (
+    id bigserial PRIMARY KEY,
+    description varchar,
+    action_type varchar,
+    submission_id bigserial REFERENCES submission(id),
+    extra_data jsonb,
+    created_time timestamp with time zone NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS task_queue (
+    id bigserial PRIMARY KEY,
+    user_id bigserial REFERENCES comms_user(id),
+    description varchar,
+    reason varchar,
+    submission_id bigserial REFERENCES submission(id),
+    extra_data jsonb,
+    created_time timestamp with time zone NOT NULL DEFAULT NOW()
+);
+
 
